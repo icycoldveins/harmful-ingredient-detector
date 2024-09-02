@@ -4,7 +4,7 @@ import CameraCapture from './CameraCapture';
 import { useOCR } from './useOCR';
 import { createClient } from '@supabase/supabase-js';
 import AppBar from './AppBar';
-import { Box, Container, VStack } from '@chakra-ui/react';
+import { Box, Container, VStack, Text } from '@chakra-ui/react';
 import SafetyAlert from './SafetyAlert';
 
 // Initialize Supabase client
@@ -22,13 +22,16 @@ const checkHarmfulIngredients = async (text) => {
 
     if (error) {
       console.error('Error querying Supabase:', error);
-      return false;
+      return { hasHarmfulIngredients: false, harmfulWords: [] };
     }
 
-    return ingredients.length > 0;
+    const harmfulWords = ingredients.map(ingredient => ingredient.name);
+    const hasHarmfulIngredients = harmfulWords.length > 0;
+
+    return { hasHarmfulIngredients, harmfulWords };
   } catch (error) {
     console.error('Error checking harmful ingredients:', error);
-    return false;
+    return { hasHarmfulIngredients: false, harmfulWords: [] };
   }
 };
 
@@ -36,6 +39,8 @@ const checkHarmfulIngredients = async (text) => {
 function App() {
   const [loading, setLoading] = useState(false);
   const [isSafe, setIsSafe] = useState(null);
+  const [extractedText, setExtractedText] = useState('');
+  const [harmfulWords, setHarmfulWords] = useState([]);
 
   // Handle file capture from either upload or camera
   const handleCapture = async (file) => {
@@ -43,8 +48,11 @@ function App() {
       setLoading(true);
 
       const extractedText = await useOCR(file);
-      const hasHarmfulIngredients = await checkHarmfulIngredients(extractedText);
+      setExtractedText(extractedText);
 
+      const { hasHarmfulIngredients, harmfulWords } = await checkHarmfulIngredients(extractedText);
+
+      setHarmfulWords(harmfulWords);
       setIsSafe(!hasHarmfulIngredients);
     } catch (error) {
       console.error('Error during OCR or Supabase query:', error);
@@ -52,6 +60,23 @@ function App() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const renderHighlightedText = (text, harmfulWords) => {
+    const words = text.split(/\s+/);
+    return words.map((word, index) => {
+      const isHarmful = harmfulWords.includes(word);
+      return (
+        <Text
+          as="span"
+          key={index}
+          color={isHarmful ? 'red.500' : 'inherit'}
+          fontWeight={isHarmful ? 'bold' : 'normal'}
+        >
+          {word}{' '}
+        </Text>
+      );
+    });
   };
 
   return (
@@ -62,7 +87,18 @@ function App() {
           <VStack spacing={8} p={4} width="100%">
             <FileUpload onDrop={handleCapture} />
             <CameraCapture onCapture={handleCapture} />
-            {isSafe !== null && <SafetyAlert isSafe={isSafe} />}
+            {loading && <div>Loading...</div>}
+            {extractedText && (
+              <Box bg="white" p={4} borderRadius="md" width="100%">
+                <Text fontSize="lg" mb={2}>
+                  Scanned Text:
+                </Text>
+                <Text>
+                  {renderHighlightedText(extractedText, harmfulWords)}
+                </Text>
+              </Box>
+            )}
+            {isSafe !== null && !loading && <SafetyAlert isSafe={isSafe} />}
           </VStack>
         </Container>
       </Box>

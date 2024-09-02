@@ -5,7 +5,6 @@ import { HiUpload } from 'react-icons/hi';
 
 const FileUpload = ({ onDrop }) => {
   const [file, setFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
   const [filePickerActive, setFilePickerActive] = useState(false); // New state to track file picker activity
   const toast = useToast();
 
@@ -13,7 +12,6 @@ const FileUpload = ({ onDrop }) => {
     if (acceptedFiles.length > 0) {
       const selectedFile = acceptedFiles[0];
       setFile(selectedFile);
-      setPreviewUrl(URL.createObjectURL(selectedFile));
 
       // Pass the file to the parent component via onDrop
       onDrop(selectedFile);
@@ -44,7 +42,6 @@ const FileUpload = ({ onDrop }) => {
 
   const iconColor = isDragActive ? "green.500" : isDragReject ? "red.500" : isFocused ? "blue.500" : "gray.400";
   const borderColor = isDragActive || isDragReject ? iconColor : "gray.200";
-  const bgColor = isDragActive ? "teal.50" : isDragReject ? "red.50" : "white";
 
   return (
     <Box
@@ -79,12 +76,6 @@ const FileUpload = ({ onDrop }) => {
       <Text fontSize="sm" color="gray.600" mt="2">
         Only image files are accepted
       </Text>
-      
-      {previewUrl && (
-        <Box mt="4">
-          <Image src={previewUrl} alt="File Preview" maxH="150px" mx="auto" borderRadius="md" />
-        </Box>
-      )}
     </Box>
   );
 };

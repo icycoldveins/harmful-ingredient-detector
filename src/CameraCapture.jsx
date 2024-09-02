@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { Box, Button, Stack, useToast } from '@chakra-ui/react';
-import { FaCamera } from 'react-icons/fa';
+import { FaCamera, FaStop, FaImage } from 'react-icons/fa';
 
 const CameraCapture = ({ onCapture }) => {
   const [isCameraOn, setIsCameraOn] = useState(false);
@@ -61,6 +61,7 @@ const CameraCapture = ({ onCapture }) => {
       canvas.toBlob(blob => {
         if (blob) {
           onCapture(blob);
+          stopCamera();  // Automatically stop the camera after capturing
           toast({
             title: "Image captured",
             status: "success",
@@ -75,31 +76,36 @@ const CameraCapture = ({ onCapture }) => {
   return (
     <Box textAlign="center" p={4}>
       <Stack direction="row" spacing={4} justify="center" mt={4} w="100%">
-        {!isCameraOn && (
+        {!isCameraOn ? (
           <Button 
-            colorScheme="green" 
-            variant="solid" 
+            bg="#28a745"  // Hex code for green
+            color="white"
+            _hover={{ bg: "#218838" }}  // Darker green on hover
             onClick={startCamera} 
             w="50%"
+            leftIcon={<FaCamera />}
           >
             Start Camera
           </Button>
-        )}
-        {isCameraOn && (
+        ) : (
           <>
             <Button 
-              colorScheme="red" 
-              variant="solid" 
+              bg="#dc3545"  // Hex code for red
+              color="white"
+              _hover={{ bg: "#c82333" }}  // Darker red on hover
               onClick={stopCamera} 
               w="50%"
+              leftIcon={<FaStop />}
             >
               Stop Camera
             </Button>
             <Button 
-              colorScheme="green" 
-              variant="solid" 
+              bg="#007bff"  // Hex code for blue
+              color="white"
+              _hover={{ bg: "#0056b3" }}  // Darker blue on hover
               onClick={captureImage} 
               w="50%"
+              leftIcon={<FaImage />}
             >
               Capture Image
             </Button>

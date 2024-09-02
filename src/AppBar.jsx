@@ -5,8 +5,8 @@ import { Box, Container, Flex, Heading, Button } from '@chakra-ui/react';
 const AppBar = () => {
   return (
     <Box 
-      bg="gray" 
       color="white" 
+      bg="#488286" 
       p={4} 
       position="sticky" 
       top={0} 
