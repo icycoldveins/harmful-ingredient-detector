@@ -17,7 +17,7 @@ const AppBar = () => {
         <Flex align="center" justify="flex-start" width="100%">
           <Flex align="center" mr={4}>
             <Image 
-              src="public/logo2.png" // Ensure this path matches the location and name of your logo file in the public folder
+              src="/public/logo2.png" // Ensure this path matches the location and name of your logo file in the public folder
               alt="Cloggers Logo"
               boxSize="100px" // Adjust the size as needed
             />
