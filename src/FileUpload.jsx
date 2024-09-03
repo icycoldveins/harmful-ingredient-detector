@@ -69,11 +69,11 @@ const FileUpload = ({ onDrop }) => {
         <HiUpload color={iconColor} size="40px" />
       </Box>
       
-      <Text fontSize="lg" color={iconColor} fontWeight="bold">
+      <Text fontSize="lg" color="#77878B" fontWeight="bold">
         {isDragActive ? "Drop it here!" : "Drag & Drop or Click to Select"}
       </Text>
       
-      <Text fontSize="sm" color="gray.600" mt="2">
+      <Text fontSize="sm" color="#77878B" mt="2">
         Only image files are accepted
       </Text>
     </Box>
