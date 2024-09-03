@@ -4,7 +4,7 @@ import CameraCapture from './CameraCapture';
 import { useOCR } from './useOCR';
 import { createClient } from '@supabase/supabase-js';
 import AppBar from './AppBar';
-import { Box, Container, VStack, Text } from '@chakra-ui/react';
+import { Box, Container, VStack, Text, Heading } from '@chakra-ui/react';
 import SafetyAlert from './SafetyAlert';
 
 // Initialize Supabase client
@@ -83,15 +83,23 @@ function App() {
     <>
       <AppBar />
       <Box minHeight="100vh" bg="gray.800">
-        <Container maxW="container.md" centerContent pt={12}>
-          <VStack spacing={8} p={4} width="100%">
+        <Container maxW={{ base: "container.sm", md: "container.md" }} centerContent pt={{ base: 8, md: 12 }}>
+          <VStack spacing={{ base: 6, md: 8 }} p={4} width="100%">
+            <Heading as="h1" size={{ base: "md", md: "lg" }} color="teal.300">
+              Welcome to Cloggers
+            </Heading>
+            <Text color="white" textAlign="center" fontSize={{ base: "sm", md: "md" }}>
+              Cloggers is your go-to tool for identifying potentially harmful ingredients in your skincare products. 
+              Simply upload a photo or use your camera to scan product labels, and our app will highlight any ingredients 
+              known to clog pores or cause acne. Stay informed and keep your skin clear with Cloggers!
+            </Text>
             <FileUpload onDrop={handleCapture} />
             <CameraCapture onCapture={handleCapture} />
             {loading && <div>Loading...</div>}
             {extractedText && (
-              <Box bg="white" p={4} borderRadius="md" width="100%">
-                <Text fontSize="lg" mb={2}>
-                  Scanned Text:
+              <Box bg="#25283D" p={4} borderRadius="md" width="100%" textAlign="center" color="#C5DECD">
+                <Text fontSize={{ base: "md", md: "lg" }} mb={2}>
+                  Scanned:
                 </Text>
                 <Text>
                   {renderHighlightedText(extractedText, harmfulWords)}

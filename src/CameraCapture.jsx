@@ -1,15 +1,22 @@
 import React, { useRef, useState } from 'react';
 import { Box, Button, Stack, useToast } from '@chakra-ui/react';
-import { FaCamera, FaStop, FaImage } from 'react-icons/fa';
+import { FaCamera, FaStop, FaImage, FaSyncAlt } from 'react-icons/fa';
 
 const CameraCapture = ({ onCapture }) => {
   const [isCameraOn, setIsCameraOn] = useState(false);
+  const [useFrontCamera, setUseFrontCamera] = useState(true); // State to track which camera to use
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const toast = useToast();
 
   const startCamera = () => {
-    navigator.mediaDevices.getUserMedia({ video: true })
+    const constraints = {
+      video: {
+        facingMode: useFrontCamera ? 'user' : 'environment' // 'user' is for front camera, 'environment' for back camera
+      }
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints)
       .then(stream => {
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
@@ -73,14 +80,20 @@ const CameraCapture = ({ onCapture }) => {
     }
   };
 
+  const toggleCamera = () => {
+    stopCamera();
+    setUseFrontCamera(prev => !prev);
+    startCamera();
+  };
+
   return (
     <Box textAlign="center" p={4}>
       <Stack direction="row" spacing={4} justify="center" mt={4} w="100%">
         {!isCameraOn ? (
           <Button 
-            bg="#28a745"  // Hex code for green
+            bg="#439775"  
             color="white"
-            _hover={{ bg: "#218838" }}  // Darker green on hover
+            _hover={{ bg: "#414770" }} 
             onClick={startCamera} 
             w="50%"
             leftIcon={<FaCamera />}
@@ -90,24 +103,34 @@ const CameraCapture = ({ onCapture }) => {
         ) : (
           <>
             <Button 
-              bg="#dc3545"  // Hex code for red
+              bg="#5D5F71"  // Hex code for grayish red
               color="white"
-              _hover={{ bg: "#c82333" }}  // Darker red on hover
+              _hover={{ bg: "#4b4d5b" }}  // Slightly darker grayish red on hover
               onClick={stopCamera} 
-              w="50%"
+              w="33%"
               leftIcon={<FaStop />}
             >
               Stop Camera
             </Button>
             <Button 
-              bg="#007bff"  // Hex code for blue
+              bg="#5FBB97"  // Hex code for teal
               color="white"
-              _hover={{ bg: "#0056b3" }}  // Darker blue on hover
+              _hover={{ bg: "#4aa67d" }}  // Slightly darker teal on hover
               onClick={captureImage} 
-              w="50%"
+              w="33%"
               leftIcon={<FaImage />}
             >
               Capture Image
+            </Button>
+            <Button 
+              bg="#93B7BE"  // Hex code for light blue-gray
+              color="white"
+              _hover={{ bg: "#7a9ea5" }}  // Slightly darker light blue-gray on hover
+              onClick={toggleCamera} 
+              w="33%"
+              leftIcon={<FaSyncAlt />}
+            >
+              Flip Camera
             </Button>
           </>
         )}
