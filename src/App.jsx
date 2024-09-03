@@ -85,7 +85,7 @@ function App() {
       <Box minHeight="100vh" bg="gray.800">
         <Container maxW={{ base: "container.sm", md: "container.md" }} centerContent pt={{ base: 8, md: 12 }}>
           <VStack spacing={{ base: 6, md: 8 }} p={4} width="100%">
-            <Heading as="h1" size={{ base: "md", md: "lg" }} color="teal.300">
+            <Heading as="h1" size={{ base: "md", md: "lg" }} color="#77878B">
               Welcome to Cloggers
             </Heading>
             <Text color="white" textAlign="center" fontSize={{ base: "sm", md: "md" }}>
@@ -97,7 +97,7 @@ function App() {
             <CameraCapture onCapture={handleCapture} />
             {loading && <div>Loading...</div>}
             {extractedText && (
-              <Box bg="#25283D" p={4} borderRadius="md" width="100%" textAlign="center" color="#C5DECD">
+              <Box bg="#25283D" p={4} borderRadius="md" width="100%" textAlign="center" color="#77878B">
                 <Text fontSize={{ base: "md", md: "lg" }} mb={2}>
                   Scanned:
                 </Text>
