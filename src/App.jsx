@@ -44,7 +44,6 @@ const checkHarmfulIngredients = async (text) => {
   }
 };
 
-
 // Function to detect mobile devices
 const isMobileDevice = () => {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -92,8 +91,6 @@ function App() {
       );
     });
   };
-    
-  
     
   return (
     <>
