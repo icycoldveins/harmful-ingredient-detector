@@ -1,14 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './App';
-import GlobalStyle from './Globastyles'; // Import your custom global styles
+import { ChakraProvider } from '@chakra-ui/react';  // Ensure ChakraProvider is imported
+import GlobalStyle from './Globastyles' // Ensure the correct import path
 
 const rootElement = document.getElementById('root');
+const root = createRoot(rootElement); // Create the root using createRoot
 
-ReactDOM.render(
-  <>
+root.render(
+  <ChakraProvider>
+
     <GlobalStyle /> {/* Apply your global styles */}
     <App />
-  </>,
-  rootElement
+    </ChakraProvider>
 );

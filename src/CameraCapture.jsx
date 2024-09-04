@@ -9,11 +9,12 @@ const CameraCapture = ({ onCapture }) => {
   const canvasRef = useRef(null);
   const toast = useToast();
 
+  // Start camera with proper constraints based on front or back camera
   const startCamera = () => {
     const constraints = {
       video: {
-        facingMode: useFrontCamera ? 'user' : 'environment' // 'user' is for front camera, 'environment' for back camera
-      }
+        facingMode: useFrontCamera ? 'user' : { exact: 'environment' }, // 'user' for front, 'environment' for back
+      },
     };
 
     navigator.mediaDevices.getUserMedia(constraints)
@@ -42,6 +43,7 @@ const CameraCapture = ({ onCapture }) => {
       });
   };
 
+  // Stop the camera and turn off the video stream
   const stopCamera = () => {
     if (videoRef.current && videoRef.current.srcObject) {
       const stream = videoRef.current.srcObject;
@@ -58,6 +60,7 @@ const CameraCapture = ({ onCapture }) => {
     });
   };
 
+  // Capture image and send it back as a blob
   const captureImage = () => {
     const canvas = canvasRef.current;
     const context = canvas.getContext('2d');
@@ -80,6 +83,7 @@ const CameraCapture = ({ onCapture }) => {
     }
   };
 
+  // Toggle between front and back cameras
   const toggleCamera = () => {
     stopCamera();
     setUseFrontCamera(prev => !prev);
@@ -88,14 +92,14 @@ const CameraCapture = ({ onCapture }) => {
 
   return (
     <Box textAlign="center" p={4}>
-      <Stack direction="row" spacing={4} justify="center" mt={4} w="100%">
+      <Stack direction={{ base: 'column', md: 'row' }} spacing={4} justify="center" mt={4} w="100%">
         {!isCameraOn ? (
           <Button 
             bg="#439775"  
             color="white"
             _hover={{ bg: "#414770" }} 
             onClick={startCamera} 
-            w="50%"
+            w={{ base: '100%', md: '50%' }}
             leftIcon={<FaCamera />}
           >
             Start Camera
@@ -107,7 +111,7 @@ const CameraCapture = ({ onCapture }) => {
               color="white"
               _hover={{ bg: "#4b4d5b" }}  // Slightly darker grayish red on hover
               onClick={stopCamera} 
-              w="33%"
+              w={{ base: '100%', md: '33%' }}
               leftIcon={<FaStop />}
             >
               Stop Camera
@@ -117,7 +121,7 @@ const CameraCapture = ({ onCapture }) => {
               color="white"
               _hover={{ bg: "#4aa67d" }}  // Slightly darker teal on hover
               onClick={captureImage} 
-              w="33%"
+              w={{ base: '100%', md: '33%' }}
               leftIcon={<FaImage />}
             >
               Capture Image
@@ -127,7 +131,7 @@ const CameraCapture = ({ onCapture }) => {
               color="white"
               _hover={{ bg: "#7a9ea5" }}  // Slightly darker light blue-gray on hover
               onClick={toggleCamera} 
-              w="33%"
+              w={{ base: '100%', md: '33%' }}
               leftIcon={<FaSyncAlt />}
             >
               Flip Camera
