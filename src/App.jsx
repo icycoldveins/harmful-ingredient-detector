@@ -71,8 +71,8 @@ function App() {
   return (
     <>
       <AppBar />
-      <Box minHeight="100vh" bg="gray.800" px={0}>
-        <Container maxW="100%" centerContent pt="5%">
+      <Box bg="gray.800" px={4} py={8} minHeight="100vh" display="flex" flexDirection="column" alignItems="center">
+        <Container maxW="container.md" centerContent>
           <VStack spacing="5%" width="100%">
             <Heading as="h1" size="xl" color="#77878B" textAlign="center">
               Welcome to Cloggers
