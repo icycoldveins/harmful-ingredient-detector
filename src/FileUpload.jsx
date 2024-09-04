@@ -1,19 +1,15 @@
 import React, { useState } from 'react';
-import { Box, Text, Image, useToast } from '@chakra-ui/react';
+import { Box, Text, useToast } from '@chakra-ui/react';
 import { useDropzone } from 'react-dropzone';
 import { HiUpload } from 'react-icons/hi';
 
 const FileUpload = ({ onDrop }) => {
-  const [file, setFile] = useState(null);
-  const [filePickerActive, setFilePickerActive] = useState(false); // New state to track file picker activity
+  const [filePickerActive, setFilePickerActive] = useState(false);
   const toast = useToast();
 
   const handleFileChange = (acceptedFiles) => {
     if (acceptedFiles.length > 0) {
       const selectedFile = acceptedFiles[0];
-      setFile(selectedFile);
-
-      // Pass the file to the parent component via onDrop
       onDrop(selectedFile);
     } else {
       toast({
@@ -24,18 +20,18 @@ const FileUpload = ({ onDrop }) => {
         isClosable: true,
       });
     }
-    setFilePickerActive(false); // Reset after file is picked
+    setFilePickerActive(false);
   };
 
   const { getRootProps, getInputProps, isDragActive, isDragReject, isFocused } = useDropzone({
-    onDrop: handleFileChange, // This ensures the function is triggered
+    onDrop: handleFileChange,
     accept: 'image/*',
     multiple: false,
     onClick: (event) => {
       if (filePickerActive) {
-        event.preventDefault(); // Prevent multiple instances of file picker
+        event.preventDefault();
       } else {
-        setFilePickerActive(true); // Set active when picker is triggered
+        setFilePickerActive(true);
       }
     },
   });
@@ -53,8 +49,8 @@ const FileUpload = ({ onDrop }) => {
       cursor="pointer"
       transition="background-color 0.3s ease"
       _hover={{ bg: "gray.100" }}
-      width="500px"
-      height="300px"
+      width={{ base: "90%", sm: "80%", md: "70%", lg: "500px" }} // Dynamic widths based on breakpoints
+      height={{ base: "200px", md: "300px" }} // Dynamic heights based on breakpoints
       borderRadius="md"
       mx="auto"
       textAlign="center"
@@ -64,15 +60,12 @@ const FileUpload = ({ onDrop }) => {
       flexDirection="column"
     >
       <input {...getInputProps()} />
-      
       <Box mb="4">
         <HiUpload color={iconColor} size="40px" />
       </Box>
-      
       <Text fontSize="lg" color="#77878B" fontWeight="bold">
         {isDragActive ? "Drop it here!" : "Drag & Drop or Click to Select"}
       </Text>
-      
       <Text fontSize="sm" color="#77878B" mt="2">
         Only image files are accepted
       </Text>

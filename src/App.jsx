@@ -4,7 +4,7 @@ import CameraCapture from './CameraCapture';
 import { useOCR } from './useOCR';
 import { createClient } from '@supabase/supabase-js';
 import AppBar from './AppBar';
-import { Box, Container, VStack, Text, Heading } from '@chakra-ui/react';
+import { Box, Container, VStack, Text, Heading, Spinner } from '@chakra-ui/react';
 import SafetyAlert from './SafetyAlert';
 
 // Initialize Supabase client
@@ -35,73 +35,62 @@ const checkHarmfulIngredients = async (text) => {
   }
 };
 
-// Main App component
 function App() {
   const [loading, setLoading] = useState(false);
   const [isSafe, setIsSafe] = useState(null);
   const [extractedText, setExtractedText] = useState('');
   const [harmfulWords, setHarmfulWords] = useState([]);
 
-  // Handle file capture from either upload or camera
   const handleCapture = async (file) => {
-    try {
-      setLoading(true);
+    setLoading(true);
 
-      const extractedText = await useOCR(file);
-      setExtractedText(extractedText);
+    const extractedText = await useOCR(file);
+    setExtractedText(extractedText);
 
-      const { hasHarmfulIngredients, harmfulWords } = await checkHarmfulIngredients(extractedText);
+    const { hasHarmfulIngredients, harmfulWords } = await checkHarmfulIngredients(extractedText);
+    setHarmfulWords(harmfulWords);
+    setIsSafe(!hasHarmfulIngredients);
 
-      setHarmfulWords(harmfulWords);
-      setIsSafe(!hasHarmfulIngredients);
-    } catch (error) {
-      console.error('Error during OCR or Supabase query:', error);
-      setIsSafe(false);
-    } finally {
-      setLoading(false);
-    }
+    setLoading(false);
   };
 
   const renderHighlightedText = (text, harmfulWords) => {
     const words = text.split(/\s+/);
-    return words.map((word, index) => {
-      const isHarmful = harmfulWords.includes(word);
-      return (
-        <Text
-          as="span"
-          key={index}
-          color={isHarmful ? 'red.500' : 'inherit'}
-          fontWeight={isHarmful ? 'bold' : 'normal'}
-        >
-          {word}{' '}
-        </Text>
-      );
-    });
+    return words.map((word, index) => (
+      <Text
+        as="span"
+        key={index}
+        color={harmfulWords.includes(word) ? 'red.500' : 'inherit'}
+        fontWeight={harmfulWords.includes(word) ? 'bold' : 'normal'}
+      >
+        {word}{' '}
+      </Text>
+    ));
   };
 
   return (
     <>
       <AppBar />
-      <Box minHeight="100vh" bg="gray.800">
-        <Container maxW={{ base: "container.sm", md: "container.md" }} centerContent pt={{ base: 8, md: 12 }}>
-          <VStack spacing={{ base: 6, md: 8 }} p={4} width="100%">
-            <Heading as="h1" size={{ base: "md", md: "lg" }} color="#77878B">
+      <Box minHeight="100vh" bg="gray.800" px={0}>
+        <Container maxW="100%" centerContent pt="5%">
+          <VStack spacing="5%" width="100%">
+            <Heading as="h1" size="xl" color="#77878B" textAlign="center">
               Welcome to Cloggers
             </Heading>
-            <Text color="white" textAlign="center" fontSize={{ base: "sm", md: "md" }}>
+            <Text color="white" textAlign="center" fontSize={['sm', 'md', 'lg']}>
               Cloggers is your go-to tool for identifying potentially harmful ingredients in your skincare products. 
               Simply upload a photo or use your camera to scan product labels, and our app will highlight any ingredients 
               known to clog pores or cause acne. Stay informed and keep your skin clear with Cloggers!
             </Text>
             <FileUpload onDrop={handleCapture} />
             <CameraCapture onCapture={handleCapture} />
-            {loading && <div>Loading...</div>}
+            {loading && <Spinner color="white" />}
             {extractedText && (
-              <Box bg="#25283D" p={4} borderRadius="md" width="100%" textAlign="center" color="#77878B">
-                <Text fontSize={{ base: "md", md: "lg" }} mb={2}>
+              <Box bg="#25283D" p="5%" borderRadius="md" width="100%" textAlign="center" color="#77878B">
+                <Text fontSize={['sm', 'md', 'lg']} mb="2%">
                   Scanned:
                 </Text>
-                <Text>
+                <Text fontSize={['sm', 'md']}>
                   {renderHighlightedText(extractedText, harmfulWords)}
                 </Text>
               </Box>
