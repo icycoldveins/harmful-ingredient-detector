@@ -6,6 +6,7 @@ import { createClient } from '@supabase/supabase-js';
 import AppBar from './AppBar';
 import { Box, Container, VStack, Text, Heading, Spinner } from '@chakra-ui/react';
 import SafetyAlert from './SafetyAlert';
+import { isMobile } from 'react-device-detect';
 
 // Initialize Supabase client
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -89,7 +90,7 @@ function App() {
               known to clog pores or cause acne. Stay informed and keep your skin clear with Cloggers!
             </Text>
             <FileUpload onDrop={handleCapture} />
-            {!isMobileDevice() && <CameraCapture onCapture={handleCapture} />}
+            {!isMobile && <CameraCapture onCapture={handleCapture} />}
             {loading && <Spinner color="white" />}
             {extractedText && (
               <Box bg="#25283D" p="5%" borderRadius="md" width="100%" textAlign="center" color="#77878B">
