@@ -14,19 +14,27 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Function to check harmful ingredients in text
+// Function to check harmful ingredients in text
 const checkHarmfulIngredients = async (text) => {
   try {
+    // Normalize input text to lowercase
+    const normalizedText = text.toLowerCase();
+
+    // Query the database to get harmful ingredients
     const { data: ingredients, error } = await supabase
       .from('harmful_ingredients')
-      .select('name')
-      .in('name', text.split(/\s+/));
+      .select('name');
 
     if (error) {
       console.error('Error querying Supabase:', error);
       return { hasHarmfulIngredients: false, harmfulWords: [] };
     }
 
-    const harmfulWords = ingredients.map(ingredient => ingredient.name);
+    // Normalize the harmful ingredients names to lowercase
+    const harmfulIngredients = ingredients.map(ingredient => ingredient.name.toLowerCase());
+
+    // Check for harmful ingredients in the entire text
+    const harmfulWords = harmfulIngredients.filter(ingredient => normalizedText.includes(ingredient));
     const hasHarmfulIngredients = harmfulWords.length > 0;
 
     return { hasHarmfulIngredients, harmfulWords };
@@ -35,6 +43,7 @@ const checkHarmfulIngredients = async (text) => {
     return { hasHarmfulIngredients: false, harmfulWords: [] };
   }
 };
+
 
 // Function to detect mobile devices
 const isMobileDevice = () => {
@@ -62,19 +71,30 @@ function App() {
   };
 
   const renderHighlightedText = (text, harmfulWords) => {
-    const words = text.split(/\s+/);
-    return words.map((word, index) => (
-      <Text
-        as="span"
-        key={index}
-        color={harmfulWords.includes(word) ? 'red.500' : 'inherit'}
-        fontWeight={harmfulWords.includes(word) ? 'bold' : 'normal'}
-      >
-        {word}{' '}
-      </Text>
-    ));
+    // Split text into words and punctuation
+    const parts = text.split(/(\s+|[^\w\s]+|\b)/).filter(Boolean);
+  
+    return parts.map((part, index) => {
+      // Check if the part (or its cleaned version) is harmful
+      const cleanPart = part.replace(/[^\w\s]/g, '').toLowerCase();
+      const isHarmful = harmfulWords.some(harmful => cleanPart.includes(harmful));
+  
+      return (
+        <Text
+          as="span"
+          key={index}
+          color={isHarmful ? 'red.500' : 'inherit'}
+          fontWeight={isHarmful ? 'bold' : 'normal'}
+          bg={isHarmful ? 'rgba(255, 0, 0, 0.1)' : 'inherit'} // Optional: Highlight background
+        >
+          {part}
+        </Text>
+      );
+    });
   };
-
+    
+  
+    
   return (
     <>
       <AppBar />
