@@ -4,42 +4,42 @@ import { FaCamera, FaStop, FaImage, FaSyncAlt } from 'react-icons/fa';
 
 const CameraCapture = ({ onCapture }) => {
   const [isCameraOn, setIsCameraOn] = useState(false);
-  const [useFrontCamera, setUseFrontCamera] = useState(true); // State to track which camera to use
+  const [useFrontCamera, setUseFrontCamera] = useState(true);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const toast = useToast();
 
-  const startCamera = () => {
-    const constraints = {
-      video: {
-        facingMode: useFrontCamera ? 'user' : 'environment' // 'user' is for front camera, 'environment' for back camera
-      }
-    };
-
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(stream => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          videoRef.current.play();
+  const startCamera = async () => {
+    try {
+      const constraints = {
+        video: {
+          facingMode: useFrontCamera ? 'user' : 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 }
         }
-        setIsCameraOn(true);
-        toast({
-          title: "Camera started",
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-        });
-      })
-      .catch(err => {
-        console.error("Error accessing camera: ", err);
-        toast({
-          title: "Error accessing camera",
-          description: "Please check your camera permissions",
-          status: "error",
-          duration: 4000,
-          isClosable: true,
-        });
+      };
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+      setIsCameraOn(true);
+      toast({
+        title: "Camera started",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
       });
+    } catch (err) {
+      console.error("Error accessing camera: ", err);
+      toast({
+        title: "Error accessing camera",
+        description: "Please check your camera permissions",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
+    }
   };
 
   const stopCamera = () => {
@@ -103,9 +103,9 @@ const CameraCapture = ({ onCapture }) => {
         ) : (
           <>
             <Button 
-              bg="#5D5F71"  // Hex code for grayish red
+              bg="#5D5F71"
               color="white"
-              _hover={{ bg: "#4b4d5b" }}  // Slightly darker grayish red on hover
+              _hover={{ bg: "#4b4d5b" }}
               onClick={stopCamera} 
               w="33%"
               leftIcon={<FaStop />}
@@ -113,9 +113,9 @@ const CameraCapture = ({ onCapture }) => {
               Stop Camera
             </Button>
             <Button 
-              bg="#5FBB97"  // Hex code for teal
+              bg="#5FBB97"
               color="white"
-              _hover={{ bg: "#4aa67d" }}  // Slightly darker teal on hover
+              _hover={{ bg: "#4aa67d" }}
               onClick={captureImage} 
               w="33%"
               leftIcon={<FaImage />}
@@ -123,9 +123,9 @@ const CameraCapture = ({ onCapture }) => {
               Capture Image
             </Button>
             <Button 
-              bg="#93B7BE"  // Hex code for light blue-gray
+              bg="#93B7BE"
               color="white"
-              _hover={{ bg: "#7a9ea5" }}  // Slightly darker light blue-gray on hover
+              _hover={{ bg: "#7a9ea5" }}
               onClick={toggleCamera} 
               w="33%"
               leftIcon={<FaSyncAlt />}

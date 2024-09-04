@@ -35,6 +35,12 @@ const checkHarmfulIngredients = async (text) => {
   }
 };
 
+// Function to detect mobile devices
+const isMobileDevice = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  return (/android|iPad|iPhone|iPod/.test(userAgent.toLowerCase()));
+};
+
 function App() {
   const [loading, setLoading] = useState(false);
   const [isSafe, setIsSafe] = useState(null);
@@ -83,7 +89,7 @@ function App() {
               known to clog pores or cause acne. Stay informed and keep your skin clear with Cloggers!
             </Text>
             <FileUpload onDrop={handleCapture} />
-            <CameraCapture onCapture={handleCapture} />
+            {!isMobileDevice() && <CameraCapture onCapture={handleCapture} />}
             {loading && <Spinner color="white" />}
             {extractedText && (
               <Box bg="#25283D" p="5%" borderRadius="md" width="100%" textAlign="center" color="#77878B">
